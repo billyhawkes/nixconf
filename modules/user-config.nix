@@ -22,9 +22,17 @@ in
   };
 
   systemd.tmpfiles.rules = [
-    "d /home/billy/.config 0755 billy users -"
     "d /home/billy/.config/kitty 0755 billy users -"
     "L+ /home/billy/.config/kitty/kitty.conf - - - - /etc/kitty/kitty.conf"
+  ];
+
+  environment.systemPackages = with pkgs; [
+    bat
+    eza
+    fastfetch
+    fzf
+    kitty
+    yazi
   ];
 
   environment.interactiveShellInit = ''

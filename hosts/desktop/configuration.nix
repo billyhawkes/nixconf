@@ -7,6 +7,7 @@ in
     ./hardware.nix
     ../../modules/system.nix
     ../../modules/desktop.nix
+    ../../modules/development.nix
     ../../modules/gaming.nix
     ../../modules/user-config.nix
     ../../modules/secrets.nix
@@ -32,16 +33,7 @@ in
     ];
     shell = pkgs.bash;
     packages = with pkgs; [
-      kitty
-      tmux
       firefox
-      yazi
-      bat
-      fastfetch
-      eza
-      fzf
-      ripgrep
-      fd
       pavucontrol
       pamixer
     ];
