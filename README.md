@@ -1,6 +1,6 @@
 # Personal NixOS Infrastructure
 
-NixOS configuration for personal desktop and future laptop.
+NixOS configuration for personal desktop.
 
 ## Structure
 
@@ -8,83 +8,57 @@ NixOS configuration for personal desktop and future laptop.
 .
 ├── flake.nix              # Entry point with host definitions
 ├── home/
-│   └── billy.nix         # Home Manager configuration
+│   └── billy.nix          # Home Manager configuration
 ├── hosts/
-│   └── desktop/          # Gaming desktop configuration
+│   └── desktop/
 │       ├── configuration.nix
-│       ├── hardware.nix
-│       └── disk.nix
+│       └── hardware.nix
 ├── modules/
-│   ├── system.nix        # Base system settings
-│   ├── desktop.nix       # Hyprland, Pipewire, Bluetooth
-│   └── gaming.nix        # Steam, Gamemode, AMD optimizations
+│   ├── system.nix         # Base system settings
+│   ├── desktop.nix        # Hyprland, Pipewire, Bluetooth
+│   └── gaming.nix         # Steam, Gamemode, AMD optimizations
 └── scripts/
-    └── install.sh        # nixos-anywhere helper
+    └── install.sh         # nixos-anywhere helper (deprecated for GUI installs)
 ```
 
-## Quick Start
+## Initial Install (GUI)
 
-### 1. Install NixOS (nixos-anywhere)
+1. Install NixOS via the graphical installer on the target machine
+2. Enable SSH: `sudo systemctl enable --now sshd`
+3. Generate hardware config from the target:
+   ```bash
+   ssh billy@<ip> "sudo nixos-generate-config --show-hardware-config" > hosts/desktop/hardware.nix
+   ```
 
-From any Linux machine with Nix:
+## Remote Rebuild (from this Mac)
 
 ```bash
-# Install nixos-anywhere
-nix shell nixpkgs#nixos-anywhere
-
-# Generate SSH key for install
-ssh-keygen -t ed25519 -f ~/.ssh/nixos-install -N ""
-
-# Copy SSH key to target (must have SSH access)
-ssh-copy-id -i ~/.ssh/nixos-install.pub root@<target-ip>
-
-# Install NixOS
-nixos-anywhere --flake .#desktop --generate-hardware-config nixos-generate-config root@<target-ip>
+nix shell nixpkgs/nixos-unstable#nixos-rebuild -c \
+    nixos-rebuild --no-reexec switch \
+    --flake ".#desktop" \
+    --build-host "billy@<ip>" \
+    --target-host "billy@<ip>" \
+    --sudo
 ```
 
-### 2. Post-Install: Activate Home Manager
-
-On the installed system:
+## Home Manager (on the target machine)
 
 ```bash
-# Clone this repo
-git clone <repo-url> ~/infrastructure
-cd ~/infrastructure
-
-# Apply home configuration
 home-manager switch --flake .#billy
 ```
 
-### 3. Development Workflow
+## Useful Commands
 
 ```bash
-# Update system
-sudo nixos-rebuild switch --flake .#desktop
-
-# Update home
-home-manager switch --flake .#billy
-
-# Update flake inputs
-nix flake update
-
-# Check flake
-nix flake check
+nix flake update          # Update flake inputs
+nix flake check            # Check flake
 ```
 
 ## Hardware
 
 - **GPU**: AMD RX 7800 XT (Mesa RADV)
 - **CPU**: AMD (microcode updates enabled)
-- **Storage**: Single NVMe (`/dev/nvme0n1`)
 - **Desktop**: Hyprland with Catppuccin theming
-
-## Features
-
-- **Gaming**: Steam, Proton, Gamemode, MangoHud
-- **Desktop**: Hyprland, Waybar, Wofi, SDDM
-- **Audio**: Pipewire with WirePlumber
-- **Apps**: Discord, Firefox, Kitty terminal
-- **Theme**: Catppuccin Mocha throughout
 
 ## Keybindings (Hyprland)
 
@@ -100,33 +74,3 @@ nix flake check
 | `Super + Shift + [1-0]` | Move window to workspace |
 | `Print` | Screenshot (selection) |
 | `Shift + Print` | Screenshot (full) |
-
-## Adding a Second PC
-
-1. Create `hosts/laptop/` directory
-2. Copy and modify configuration files
-3. Add to `flake.nix`:
-   ```nix
-   laptop = nixpkgs.lib.nixosSystem {
-     inherit system;
-     modules = [
-       disko.nixosModules.disko
-       ./hosts/laptop/configuration.nix
-     ];
-   };
-   ```
-
-## Troubleshooting
-
-### Steam won't launch
-```bash
-steam --reset
-```
-
-### AMD GPU not detected
-Check `lspci | grep VGA` and verify drivers in `hardware.nix`.
-
-### Audio issues
-```bash
-systemctl --user restart pipewire pipewire-pulse
-```
