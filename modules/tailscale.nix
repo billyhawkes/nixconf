@@ -11,6 +11,10 @@
       default = [ ];
       description = "Server tags";
     };
+    hostName = lib.mkOption {
+      type = lib.types.str;
+      description = "Tailscale hostname";
+    };
   };
 
   config = lib.mkIf config.preferences.tailscale.enable {
@@ -20,7 +24,7 @@
       enable = true;
       authKeyFile = config.sops.secrets.tailscale_key.path;
       extraUpFlags = [
-        "--hostname=${config.preferences.hostName}"
+        "--hostname=${config.preferences.tailscale.hostName}"
         "--ssh"
       ]
       ++ lib.optional (config.preferences.tailscale.tags != [ ]) (
