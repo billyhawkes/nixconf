@@ -5,12 +5,17 @@
 }:
 {
   options.preferences.tailscale = {
+    # Enables Tailscale
     enable = lib.mkEnableOption "Tailscale";
+
+    # Defines the tags of the Tailscale server
     tags = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
       description = "Server tags";
     };
+
+    # Defines the hostname of the Tailscale server
     hostName = lib.mkOption {
       type = lib.types.str;
       description = "Tailscale hostname";
