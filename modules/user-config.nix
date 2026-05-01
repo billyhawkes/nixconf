@@ -1,6 +1,12 @@
 { pkgs, ... }:
 
 let
+  wallpaper = pkgs.fetchurl {
+    name = "wallpaper.jpg";
+    url = "https://images.unsplash.com/photo-1615389854084-0eec48c5c12d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+    hash = "sha256-4G5VJNj0v00/7IyCvCSB+jHrLBIcFS3weMjbPnJ+0OY=";
+  };
+
   hyprlandConfig = pkgs.writeText "hyprland.conf" ''
     monitor=,preferred,auto,auto
 
@@ -52,10 +58,6 @@ let
       preserve_split=true
     }
 
-    gestures {
-      workspace_swipe=false
-    }
-
     $mod=SUPER
 
     bind=$mod, Return, exec, kitty
@@ -101,11 +103,11 @@ let
 
     exec-once=waybar
     exec-once=mako
-    exec-once=swww init
-    exec-once=swww img ~/Pictures/wallpaper.png
+    exec-once=swww-daemon
+    exec-once=sleep 1 && swww img ${wallpaper}
 
-    windowrulev2=float, class:^(pavucontrol)$
-    windowrulev2=float, class:^(wofi)$
+    windowrulev2 = float, class:^(pavucontrol)$
+    windowrulev2 = float, class:^(wofi)$
   '';
 
   kittyConfig = pkgs.writeText "kitty.conf" ''
