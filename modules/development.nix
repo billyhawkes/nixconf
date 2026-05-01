@@ -12,6 +12,16 @@ let
 in
 {
   programs = {
+    git = {
+      enable = true;
+      config = {
+        user = {
+          email = "billyhawkes02@gmail.com";
+          name = "Billy Hawkes";
+        };
+      };
+    };
+
     direnv = {
       enable = true;
       nix-direnv.enable = true;

@@ -8,8 +8,8 @@ in
     ../../modules/system.nix
     ../../modules/desktop.nix
     ../../modules/development.nix
+    ../../modules/ai.nix
     ../../modules/gaming.nix
-    ../../modules/user-config.nix
     ../../modules/secrets.nix
     ../../modules/tailscale.nix
   ];
