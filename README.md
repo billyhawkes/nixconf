@@ -6,31 +6,20 @@ NixOS configuration for personal desktop.
 
 ```
 .
-├── flake.nix              # Entry point with host definitions
-├── home/
-│   └── billy.nix          # Home Manager configuration
-├── hosts/
-│   └── desktop/
-│       ├── configuration.nix
-│       └── hardware.nix
+├── flake.nix                    # Entry point
+├── hosts/desktop/
+│   ├── configuration.nix         # Host config
+│   └── hardware.nix              # Hardware config (auto-generated)
 ├── modules/
-│   ├── system.nix         # Base system settings
-│   ├── desktop.nix        # Hyprland, Pipewire, Bluetooth
-│   └── gaming.nix         # Steam, Gamemode, AMD optimizations
+│   ├── system.nix                # Base system settings
+│   ├── desktop.nix               # Hyprland, Pipewire, Bluetooth
+│   ├── gaming.nix                # Steam, Gamemode, AMD optimizations
+│   └── user-config.nix           # Hyprland, Kitty, Git, Bash configs
 └── scripts/
-    └── install.sh         # nixos-anywhere helper (deprecated for GUI installs)
+    └── install.sh                # nixos-anywhere helper
 ```
 
-## Initial Install (GUI)
-
-1. Install NixOS via the graphical installer on the target machine
-2. Enable SSH: `sudo systemctl enable --now sshd`
-3. Generate hardware config from the target:
-   ```bash
-   ssh billy@<ip> "sudo nixos-generate-config --show-hardware-config" > hosts/desktop/hardware.nix
-   ```
-
-## Remote Rebuild (from this Mac)
+## Apply config from Mac
 
 ```bash
 nix shell nixpkgs/nixos-unstable#nixos-rebuild -c \
@@ -41,17 +30,13 @@ nix shell nixpkgs/nixos-unstable#nixos-rebuild -c \
     --sudo
 ```
 
-## Home Manager (on the target machine)
-
-```bash
-home-manager switch --flake .#billy
-```
+One command applies everything — system, desktop, gaming, and user configs.
 
 ## Useful Commands
 
 ```bash
-nix flake update          # Update flake inputs
-nix flake check            # Check flake
+nix flake update    # Update flake inputs
+nix flake check      # Check flake
 ```
 
 ## Hardware

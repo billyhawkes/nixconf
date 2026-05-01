@@ -6,6 +6,7 @@
     ../../modules/system.nix
     ../../modules/desktop.nix
     ../../modules/gaming.nix
+    ../../modules/user-config.nix
   ];
 
   networking.hostName = "desktop";
@@ -15,6 +16,15 @@
     description = "Billy";
     extraGroups = [ "networkmanager" "wheel" "audio" "video" "gamemode" ];
     shell = pkgs.bash;
+    packages = with pkgs; [
+      kitty tmux discord firefox
+      waybar wofi swww swaylock-effects wlogout mako wl-clipboard
+      yazi bat
+      fastfetch eza fzf ripgrep fd
+      pavucontrol pamixer
+      grim slurp
+      catppuccin-curses.mochaDark papirus-icon-theme
+    ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJs3L3ILSlszfrfdIql6BoMzUwvHxqvykpLCIkFg4/+K billyhawkes02@gmail.com"
     ];
