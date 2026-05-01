@@ -12,9 +12,9 @@ NixOS configuration for personal desktop.
 │   └── hardware.nix              # Hardware config (auto-generated)
 ├── modules/
 │   ├── system.nix                # Base system settings
-│   ├── desktop.nix               # Hyprland, Pipewire, Bluetooth
+│   ├── desktop.nix               # KDE Plasma, Pipewire, Bluetooth
 │   ├── gaming.nix                # Steam, Gamemode, AMD optimizations
-│   └── user-config.nix           # Hyprland, Kitty, Git, Bash configs
+│   └── user-config.nix           # Kitty, Git, Bash configs
 └── scripts/
     └── install.sh                # nixos-anywhere helper
 ```
@@ -43,19 +43,4 @@ nix flake check      # Check flake
 
 - **GPU**: AMD RX 7800 XT (Mesa RADV)
 - **CPU**: AMD (microcode updates enabled)
-- **Desktop**: Hyprland with Catppuccin theming
-
-## Keybindings (Hyprland)
-
-| Key | Action |
-|-----|--------|
-| `Super + Enter` | Open terminal (Kitty) |
-| `Super + Q` | Close window |
-| `Super + R` | App launcher (Wofi) |
-| `Super + B` | Firefox |
-| `Super + D` | Discord |
-| `Super + L` | Lock screen |
-| `Super + [1-0]` | Switch workspace |
-| `Super + Shift + [1-0]` | Move window to workspace |
-| `Print` | Screenshot (selection) |
-| `Shift + Print` | Screenshot (full) |
+- **Desktop**: KDE Plasma on X11

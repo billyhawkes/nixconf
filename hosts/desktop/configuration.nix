@@ -1,5 +1,7 @@
 { pkgs, ... }:
-
+let
+  hostName = "desktop";
+in
 {
   imports = [
     ./hardware.nix
@@ -11,11 +13,11 @@
     ../../modules/tailscale.nix
   ];
 
-  networking.hostName = "desktop";
+  networking.hostName = hostName;
 
   preferences = {
     tailscale.enable = true;
-    tailscale.hostName = "desktop";
+    tailscale.hostName = hostName;
   };
 
   users.users.billy = {
@@ -32,15 +34,7 @@
     packages = with pkgs; [
       kitty
       tmux
-      discord
       firefox
-      waybar
-      wofi
-      awww
-      swaylock-effects
-      wlogout
-      mako
-      wl-clipboard
       yazi
       bat
       fastfetch
@@ -50,10 +44,6 @@
       fd
       pavucontrol
       pamixer
-      grim
-      slurp
-      catppuccin
-      papirus-icon-theme
     ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJs3L3ILSlszfrfdIql6BoMzUwvHxqvykpLCIkFg4/+K billyhawkes02@gmail.com"
