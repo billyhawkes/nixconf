@@ -44,5 +44,7 @@
     curl
     htop
     btop
+    age
+    sops
   ];
 }

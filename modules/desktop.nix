@@ -21,7 +21,10 @@
 
   services.pipewire = {
     enable = true;
-    alsa = { enable = true; support32Bit = true; };
+    alsa = {
+      enable = true;
+      support32Bit = true;
+    };
     pulse.enable = true;
     jack.enable = true;
   };
@@ -42,7 +45,10 @@
 
   xdg.portal = {
     enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-hyprland ];
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal-hyprland
+    ];
     configPackages = [ pkgs.hyprland ];
   };
 
@@ -57,3 +63,4 @@
     XDG_SESSION_DESKTOP = "Hyprland";
   };
 }
+

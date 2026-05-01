@@ -1,0 +1,10 @@
+keys:
+  - &admin_billy age1dz5x6frmdvphe88hz00fh5sq5sv7v7vrnwv05nvphsy0rvcw09pses894l
+  - &host_desktop age15jvghc9vjvl952u2en8pq3qjs5p0gjsa6xfs9ddyjqdqeynlrsxs026dad
+
+creation_rules:
+  - path_regex: ^secrets/[^/]+\.yaml$
+    key_groups:
+      - age:
+          - *admin_billy
+          - *host_desktop

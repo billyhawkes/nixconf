@@ -1,0 +1,11 @@
+# Age private key
+*.age.key
+keys.txt
+
+# Decrypted secrets (only encrypted versions should be committed)
+secrets/*.yaml
+!secrets/*.enc.yaml
+secrets/*.json
+!secrets/*.enc.json
+secrets/*.env
+!secrets/*.enc.env

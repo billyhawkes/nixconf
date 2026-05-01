@@ -7,6 +7,7 @@
     ../../modules/desktop.nix
     ../../modules/gaming.nix
     ../../modules/user-config.nix
+    ../../modules/secrets.nix
   ];
 
   networking.hostName = "desktop";
