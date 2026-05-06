@@ -17,8 +17,11 @@ in
   networking.hostName = hostName;
 
   preferences = {
-    tailscale.enable = true;
-    tailscale.hostName = hostName;
+    tailscale = {
+      inherit hostName;
+      enable = true;
+      ports = [ 11434 ];
+    };
   };
 
   users.users.billy = {

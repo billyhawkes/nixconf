@@ -20,6 +20,12 @@
       type = lib.types.str;
       description = "Tailscale hostname";
     };
+
+    ports = lib.mkOption {
+      type = lib.types.listOf lib.types.int;
+      default = [ ];
+      description = "Tailscale ports";
+    };
   };
 
   config = lib.mkIf config.preferences.tailscale.enable {
@@ -28,6 +34,7 @@
     services.tailscale = {
       enable = true;
       authKeyFile = config.sops.secrets.tailscale_key.path;
+      openFirewall = true;
       extraUpFlags = [
         "--hostname=${config.preferences.tailscale.hostName}"
         "--ssh"
@@ -36,5 +43,12 @@
         "--advertise-tags=" + lib.concatMapStringsSep "," (t: "tag:${t}") config.preferences.tailscale.tags
       );
     };
+
+    networking.firewall = {
+      enable = true;
+      trustedInterfaces = [ "tailscale0" ];
+      interfaces.tailscale0.allowedTCPPorts = config.preferences.tailscale.ports;
+    };
   };
+
 }
