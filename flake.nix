@@ -1,8 +1,12 @@
 {
-  description = "Personal NixOS Desktop Configuration";
+  description = "Personal Nix Configurations";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nvf = {
       url = "github:NotAShelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -14,6 +18,7 @@
   outputs =
     {
       self,
+      nix-darwin,
       nixpkgs,
       nvf,
       sops-nix,
@@ -28,6 +33,13 @@
             ./hosts/desktop/configuration.nix
             sops-nix.nixosModules.sops
           ];
+        };
+      };
+
+      darwinConfigurations = {
+        macbook = nix-darwin.lib.darwinSystem {
+          system = "aarch64-darwin";
+          modules = [ ./hosts/macbook/configuration.nix ];
         };
       };
     };

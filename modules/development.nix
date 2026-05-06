@@ -22,11 +22,6 @@ in
       };
     };
 
-    direnv = {
-      enable = true;
-      nix-direnv.enable = true;
-    };
-
     nvf = {
       enable = true;
       enableManpages = true;
@@ -359,6 +354,7 @@ in
       ghostty
       jq
       lazygit
+      nh
       nil
       nixfmt
       nodejs_24

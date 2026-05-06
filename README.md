@@ -23,15 +23,21 @@ NixOS configuration for personal desktop.
 ## Apply config from Mac
 
 ```bash
-nix shell nixpkgs/nixos-unstable#nixos-rebuild -c \
-    nixos-rebuild --no-reexec switch \
-    --flake ".#desktop" \
+nix shell nixpkgs/nixos-unstable#nh -c \
+    nh os switch ".#desktop" \
+    -- \
     --build-host "billy@<ip>" \
     --target-host "billy@<ip>" \
     --sudo
 ```
 
 One command applies everything — system, desktop, development, gaming, and user configs.
+
+## Apply MacBook config
+
+```bash
+nix shell nixpkgs/nixos-unstable#nh -c nh darwin switch ".#macbook"
+```
 
 ## Useful Commands
 
