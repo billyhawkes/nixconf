@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   boot = {
@@ -18,10 +18,6 @@
     };
   };
 
-  time.timeZone = "America/Toronto";
-  i18n.defaultLocale = "en_CA.UTF-8";
-  console.keyMap = "us";
-
   services.openssh = {
     enable = true;
     settings = {
@@ -30,21 +26,24 @@
     };
   };
 
-  nix.gc = {
+  time.timeZone = "America/Toronto";
+  i18n.defaultLocale = "en_CA.UTF-8";
+  console.keyMap = "us";
+
+  nix = {
     automatic = true;
     dates = "weekly";
     options = "--delete-older-than 30d";
+    settings.auto-optimise-store = true;
   };
-  nix.settings.auto-optimise-store = true;
 
-  environment.systemPackages = with pkgs; [
-    vim
-    git
-    wget
-    curl
-    htop
-    btop
-    age
-    sops
-  ];
+  programs.git = {
+    enable = true;
+    config = {
+      user = {
+        email = "billyhawkes02@gmail.com";
+        name = "Billy Hawkes";
+      };
+    };
+  };
 }

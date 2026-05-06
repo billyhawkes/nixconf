@@ -17,7 +17,6 @@
 
   outputs =
     {
-      self,
       nix-darwin,
       nixpkgs,
       nvf,
@@ -39,7 +38,10 @@
       darwinConfigurations = {
         macbook = nix-darwin.lib.darwinSystem {
           system = "aarch64-darwin";
-          modules = [ ./hosts/macbook/configuration.nix ];
+          modules = [
+            nvf.darwinModules.default
+            ./hosts/macbook/configuration.nix
+          ];
         };
       };
     };

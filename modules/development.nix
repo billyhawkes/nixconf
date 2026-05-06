@@ -1,27 +1,6 @@
 { pkgs, ... }:
-
-let
-  ghosttyConfig = pkgs.writeText "ghostty-config" ''
-    font-family = JetBrains Mono
-    font-size = 11
-    theme = dark:catppuccin-mocha,light:catppuccin-latte
-    window-padding-x = 8
-    window-padding-y = 8
-    shell-integration = bash
-  '';
-in
 {
   programs = {
-    git = {
-      enable = true;
-      config = {
-        user = {
-          email = "billyhawkes02@gmail.com";
-          name = "Billy Hawkes";
-        };
-      };
-    };
-
     nvf = {
       enable = true;
       enableManpages = true;
@@ -74,7 +53,8 @@ in
 
         clipboard = {
           enable = true;
-          providers.xclip.enable = true;
+          registers = "unnamedplus";
+          providers.xclip.enable = pkgs.stdenv.isLinux;
         };
 
         autocomplete.blink-cmp = {
@@ -344,14 +324,12 @@ in
   };
 
   environment = {
-    etc."ghostty/config".source = ghosttyConfig;
     systemPackages = with pkgs; [
       bun
       deadnix
       devenv
       fd
       gh
-      ghostty
       jq
       lazygit
       nh
@@ -373,9 +351,4 @@ in
     ];
   };
 
-  systemd.tmpfiles.rules = [
-    "d /home/billy/.config 0755 billy users -"
-    "d /home/billy/.config/ghostty 0755 billy users -"
-    "L+ /home/billy/.config/ghostty/config - - - - /etc/ghostty/config"
-  ];
 }

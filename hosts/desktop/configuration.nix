@@ -5,6 +5,7 @@ in
 {
   imports = [
     ./hardware.nix
+    ../../modules/common.nix
     ../../modules/system.nix
     ../../modules/desktop.nix
     ../../modules/development.nix
@@ -48,12 +49,6 @@ in
   users.users.root.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJs3L3ILSlszfrfdIql6BoMzUwvHxqvykpLCIkFg4/+K billyhawkes02@gmail.com"
   ];
-
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
-  nixpkgs.config.allowUnfree = true;
 
   system.stateVersion = "24.11";
 }
