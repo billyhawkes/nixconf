@@ -7,6 +7,12 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  environment.variables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+    SOPS_EDITOR = "nvim";
+  };
+
   environment.systemPackages = with pkgs; [
     vim
     git
