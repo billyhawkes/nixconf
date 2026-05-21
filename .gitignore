@@ -9,3 +9,5 @@ secrets/*.json
 !secrets/*.enc.json
 secrets/*.env
 !secrets/*.enc.env
+
+result

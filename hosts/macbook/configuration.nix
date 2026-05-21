@@ -38,7 +38,7 @@ in
 
   system.defaults.CustomUserPreferences."com.knollsoft.Rectangle" = {
     # Keybindings: keyCode 123=left, 124=right, 126=up
-    # Modifiers: 1048576=cmd, 131072=shift, 786432=cmd+shift
+    # Modifiers: 1048576=cmd, 131072=shift, 1179648=cmd+shift
     leftHalf = {
       keyCode = 123;
       modifierFlags = 1048576;
@@ -50,6 +50,14 @@ in
     maximize = {
       keyCode = 126;
       modifierFlags = 1048576;
+    };
+    previousDisplay = {
+      keyCode = 123;
+      modifierFlags = 1179648;
+    };
+    nextDisplay = {
+      keyCode = 124;
+      modifierFlags = 1179648;
     };
   };
 
