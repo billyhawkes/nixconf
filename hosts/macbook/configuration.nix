@@ -59,6 +59,9 @@ in
       install -d -m 0755 -o ${user} -g staff ${home}/.config/ghostty
       ln -sfn /etc/ghostty/config ${home}/.config/ghostty/config
       chown -h ${user}:staff ${home}/.config/ghostty/config
+
+      mkdir -p /Users/billyhawkes/.config/gh
+      chown -R billyhawkes /Users/billyhawkes/.config/gh
     '';
     defaults = {
       dock = {
