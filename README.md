@@ -13,7 +13,7 @@ NixOS configuration for personal desktop.
 ├── modules/
 │   ├── system.nix                # Base system settings
 │   ├── desktop.nix               # KDE Plasma, Pipewire, Bluetooth
-│   ├── development.nix           # Ghostty, nvf Neovim, Bun, web tooling
+│   ├── development.nix           # nvf Neovim, Bun, web tooling
 │   ├── gaming.nix                # Steam, Gamemode, AMD optimizations
 │   └── user-config.nix           # Kitty, Git, Bash configs
 └── scripts/

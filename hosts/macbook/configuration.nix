@@ -62,6 +62,10 @@ in
 
       mkdir -p /Users/billyhawkes/.config/gh
       chown -R billyhawkes /Users/billyhawkes/.config/gh
+
+      install -d -m 0755 -o ${user} -g staff ${home}/.aws
+      ln -sfn /etc/aws/config ${home}/.aws/config
+      chown -h ${user}:staff ${home}/.aws/config
     '';
     defaults = {
       dock = {
@@ -81,5 +85,18 @@ in
     [user]
       email = "billyhawkes02@gmail.com"
       name = "Billy Hawkes"
+  '';
+
+  environment.etc."aws/config".text = ''
+    [profile bhawkes@krakconsultants.com]
+    sso_session = bhawkes@krakconsultants.com
+    sso_account_id = 699475939168
+    sso_role_name = AdministratorAccess
+    region = ca-central-1
+
+    [sso-session bhawkes@krakconsultants.com]
+    sso_start_url = https://ssoins-8824190e0c2cdd70.portal.ca-central-1.app.aws
+    sso_region = ca-central-1
+    sso_registration_scopes = sso:account:access
   '';
 }
