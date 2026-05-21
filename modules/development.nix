@@ -6,9 +6,6 @@
 
   environment = {
     systemPackages = with pkgs; [
-      # Infra
-      pulumi
-
       # Nix
       nh
       nil
@@ -17,7 +14,6 @@
 
       # Software
       bun
-      pnpm
       lazygit
       nodejs_24
       oxlint
