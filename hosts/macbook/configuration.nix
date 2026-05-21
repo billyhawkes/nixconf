@@ -79,6 +79,8 @@ in
       chown ${user}:staff ${home}/.gitconfig
     '';
     defaults = {
+      NSGlobalDomain."com.apple.swipescrolldirection" = false;
+
       dock = {
         autohide = true;
         autohide-delay = 0.0;
