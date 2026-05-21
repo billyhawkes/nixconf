@@ -6,6 +6,8 @@
 
   environment = {
     systemPackages = with pkgs; [
+      opencode
+
       # Nix
       nh
       nil

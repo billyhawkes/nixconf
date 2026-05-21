@@ -59,19 +59,21 @@ in
       install -d -m 0755 -o ${user} -g staff ${home}/.config/ghostty
       ln -sfn /etc/ghostty/config ${home}/.config/ghostty/config
       chown -h ${user}:staff ${home}/.config/ghostty/config
-
-      mkdir -p /Users/billyhawkes/.config/gh
-      chown -R billyhawkes /Users/billyhawkes/.config/gh
-
+      mkdir -p ${home}/.config/opencode
+      chown -R ${user} ${home}/.config/opencode
+      mkdir -p ${home}/.config/gh
+      chown -R ${user} ${home}/.config/gh
       install -d -m 0755 -o ${user} -g staff ${home}/.aws
       ln -sfn /etc/aws/config ${home}/.aws/config
       chown -h ${user}:staff ${home}/.aws/config
+      printf '[user]\n  name = Billy Hawkes\n  email = billyhawkes02@gmail.com\n' > ${home}/.gitconfig
+      chown ${user}:staff ${home}/.gitconfig
     '';
     defaults = {
       dock = {
         autohide = true;
-        autohide-delay = 0.0; # no delay before hiding
-        autohide-time-modifier = 0.0; # instant animation
+        autohide-delay = 0.0;
+        autohide-time-modifier = 0.0;
         show-recents = false;
       };
     };
@@ -80,12 +82,6 @@ in
       remapCapsLockToEscape = true;
     };
   };
-
-  environment.etc."gitconfig".text = ''
-    [user]
-      email = "billyhawkes02@gmail.com"
-      name = "Billy Hawkes"
-  '';
 
   environment.etc."aws/config".text = ''
     [profile bhawkes@krakconsultants.com]
