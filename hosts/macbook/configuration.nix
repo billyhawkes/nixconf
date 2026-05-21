@@ -14,16 +14,26 @@ in
 
   programs = {
     bash.enable = true;
+
+    zsh = {
+      enable = true;
+      interactiveShellInit = ''
+        eval "$(/opt/homebrew/bin/direnv hook zsh)"
+      '';
+    };
   };
 
   homebrew = {
     enable = true;
+    brews = [
+      "direnv" # TASK: Move to pkgs when build is fixed
+    ];
     casks = [
       "ghostty"
       "rectangle"
       "google-chrome"
       "discord"
-      "tailscale"
+      "tailscale-app"
     ];
   };
 
@@ -95,6 +105,12 @@ in
   };
 
   environment.etc."aws/config".text = ''
+    [default]
+    sso_session = bhawkes@krakconsultants.com
+    sso_account_id = 699475939168
+    sso_role_name = AdministratorAccess
+    region = ca-central-1
+
     [profile bhawkes@krakconsultants.com]
     sso_session = bhawkes@krakconsultants.com
     sso_account_id = 699475939168

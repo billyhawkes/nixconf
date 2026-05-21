@@ -15,6 +15,7 @@
       statix
 
       # Software
+      awscli2
       bun
       lazygit
       nodejs_24
