@@ -23,6 +23,7 @@ in
       "rectangle"
       "google-chrome"
       "discord"
+      "tailscale"
     ];
   };
 
