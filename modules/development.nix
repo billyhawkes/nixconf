@@ -6,32 +6,27 @@
 
   environment = {
     systemPackages = with pkgs; [
+      # Tools
       opencode
 
       # Nix
       nh
-      nil
-      nixfmt
       statix
-
-      # Software
-      awscli2
-      bun
-      lazygit
-      nodejs_24
-      oxlint
-      oxfmt
-      prettierd
-
       deadnix
-      fd
-      gh
-      jq
-      ripgrep
       shellcheck
+
+      # Typescrypt
+      bun
+      nodejs_24
+      prettierd
       typescript
       typescript-language-server
       vscode-langservers-extracted
+
+      # CLI's
+      awscli2
+      lazygit
+      gh
     ];
   };
 }

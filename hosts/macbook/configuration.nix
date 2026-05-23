@@ -20,15 +20,22 @@ in
     zsh = {
       enable = true;
       interactiveShellInit = ''
-        eval "$(/opt/homebrew/bin/direnv hook zsh)"
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+        eval "$(direnv hook zsh)"
       '';
     };
   };
+
+  environment.systemPath = [
+    "/opt/homebrew/bin"
+    "/opt/homebrew/sbin"
+  ];
 
   homebrew = {
     enable = true;
     brews = [
       "direnv" # TASK: Move to pkgs when build is fixed
+      "odin"
     ];
     casks = [
       "ghostty"

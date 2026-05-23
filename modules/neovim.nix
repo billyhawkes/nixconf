@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 {
   programs.nvf = {
     enable = true;
@@ -27,8 +27,11 @@
         scrolloff = 10;
         showmode = false;
         signcolumn = "yes";
+        shiftwidth = 4;
         splitbelow = true;
         splitright = true;
+        softtabstop = 4;
+        tabstop = 4;
         timeoutlen = 300;
         undofile = true;
         updatetime = 250;
@@ -162,7 +165,15 @@
         lspkind.enable = true;
         lspconfig.enable = true;
         presets.tailwindcss-language-server.enable = true;
-        servers.typos_lsp.enable = true;
+        servers = {
+          ols = {
+            cmd = lib.mkForce [ "/opt/homebrew/bin/ols" ];
+            init_options = {
+              odin_command = "/opt/homebrew/bin/odin";
+            };
+          };
+          typos_lsp.enable = true;
+        };
       };
       mini = {
         ai = {
@@ -236,6 +247,7 @@
         lua.enable = true;
         markdown.enable = true;
         nix.enable = true;
+        odin.enable = true;
         python.enable = true;
         typescript = {
           enable = true;
