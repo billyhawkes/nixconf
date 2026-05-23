@@ -37,6 +37,7 @@ in
     ];
     shell = pkgs.bash;
     packages = with pkgs; [
+      discord
       firefox
       pavucontrol
       pamixer

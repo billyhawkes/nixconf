@@ -31,9 +31,11 @@
   console.keyMap = "us";
 
   nix = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 30d";
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 30d";
+    };
     settings.auto-optimise-store = true;
   };
 

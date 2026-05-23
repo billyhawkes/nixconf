@@ -37,6 +37,7 @@ in
       "tailscale-app"
       "docker-desktop"
       "linearmouse"
+      "moonlight"
       "rectangle"
     ];
   };

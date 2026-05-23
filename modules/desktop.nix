@@ -6,6 +6,11 @@
 
     displayManager.sddm.enable = true;
 
+    displayManager.autoLogin = {
+      enable = true;
+      user = "billy";
+    };
+
     desktopManager.plasma6.enable = true;
 
     pipewire = {
@@ -19,6 +24,13 @@
     };
 
     blueman.enable = true;
+
+    sunshine = {
+      enable = true;
+      autoStart = true;
+      capSysAdmin = true;
+      openFirewall = true;
+    };
   };
 
   hardware.bluetooth = {

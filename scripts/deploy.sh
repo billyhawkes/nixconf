@@ -1,6 +1,6 @@
-nix shell nixpkgs/nixos-unstable#nixos-rebuild -c \
-    nixos-rebuild --no-reexec switch \
-    --flake ".#desktop" \
-    --build-host "billy@192.168.2.245" \
-    --target-host "billy@192.168.2.245" \
-    --ask-sudo-password
+nix shell nixpkgs/nixos-unstable#nh -c \
+  nh os switch . \
+  --hostname desktop \
+  --build-host "billy@desktop" \
+  --target-host "billy@desktop" \
+  --ask
