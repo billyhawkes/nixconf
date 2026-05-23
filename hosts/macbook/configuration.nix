@@ -1,6 +1,8 @@
+{ pkgs, ... }:
 let
   user = "billyhawkes";
   home = "/Users/${user}";
+  postgresql = pkgs.postgresql_18;
 in
 {
   imports = [
@@ -30,10 +32,12 @@ in
     ];
     casks = [
       "ghostty"
-      "rectangle"
       "google-chrome"
       "discord"
       "tailscale-app"
+      "docker-desktop"
+      "linearmouse"
+      "rectangle"
     ];
   };
 
@@ -89,8 +93,6 @@ in
       chown ${user}:staff ${home}/.gitconfig
     '';
     defaults = {
-      NSGlobalDomain."com.apple.swipescrolldirection" = false;
-
       dock = {
         autohide = true;
         autohide-delay = 0.0;
@@ -122,4 +124,19 @@ in
     sso_region = ca-central-1
     sso_registration_scopes = sso:account:access
   '';
+
+  services.postgresql = {
+    enable = true;
+    package = postgresql;
+    extraPlugins = with postgresql.pkgs; [
+      postgis
+      pgvector
+    ];
+    dataDir = "${home}/.local/share/postgresql/18";
+    authentication = ''
+      local all all trust
+      host all all 127.0.0.1/32 trust
+      host all all ::1/128 trust
+    '';
+  };
 }
