@@ -45,6 +45,8 @@
         oxlint
         oxfmt
         python313Packages.python-lsp-server
+        rust-analyzer
+        rustfmt
         statix
         stylua
         tailwindcss-language-server
@@ -139,6 +141,7 @@
             lua = [ "stylua" ];
             markdown = [ "oxfmt" ];
             nix = [ "nixfmt" ];
+            rust = [ "rustfmt" ];
             typescript = [ "oxfmt" ];
             typescriptreact = [ "oxfmt" ];
             yaml = [ "oxfmt" ];
@@ -250,6 +253,7 @@
         nix.enable = true;
         odin.enable = true;
         python.enable = true;
+        rust.enable = true;
         typescript = {
           enable = true;
           extensions.ts-error-translator.enable = true;

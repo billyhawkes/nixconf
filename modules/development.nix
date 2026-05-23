@@ -23,6 +23,13 @@
       typescript-language-server
       vscode-langservers-extracted
 
+      # Rust
+      cargo
+      clippy
+      rust-analyzer
+      rustc
+      rustfmt
+
       # CLI's
       awscli2
       lazygit
