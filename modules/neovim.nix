@@ -239,6 +239,7 @@
       };
 
       languages = {
+        enableTreesitter = true;
         astro.enable = true;
         bash.enable = true;
         css.enable = true;
