@@ -6,14 +6,14 @@
 
   environment = {
     systemPackages = with pkgs; [
-      # Tools
-      opencode
+      mysql84
 
       # Nix
       nh
       statix
       deadnix
       shellcheck
+      cmake
 
       # Typescrypt
       bun
@@ -29,6 +29,9 @@
       rust-analyzer
       rustc
       rustfmt
+
+      # Zig
+      zig
 
       # CLI's
       awscli2

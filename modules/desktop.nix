@@ -31,6 +31,15 @@
       capSysAdmin = true;
       openFirewall = true;
     };
+
+    logind.settings.Login.IdleAction = "ignore";
+  };
+
+  systemd.sleep.settings.Sleep = {
+    AllowSuspend = "no";
+    AllowHibernation = "no";
+    AllowHybridSleep = "no";
+    AllowSuspendThenHibernate = "no";
   };
 
   hardware.bluetooth = {

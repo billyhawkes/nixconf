@@ -1,5 +1,9 @@
 { pkgs, ... }:
 {
+  environment.systemPackages = with pkgs; [
+    ollama
+  ];
+
   services.ollama = {
     enable = true;
     package = pkgs.ollama-rocm;
@@ -15,8 +19,12 @@
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    ollama
+  networking.firewall.allowedTCPPorts = [
+    11434
+  ];
+
+  systemd.tmpfiles.rules = [
+    "d /var/lib/tei 0755 root root -"
   ];
 
 }

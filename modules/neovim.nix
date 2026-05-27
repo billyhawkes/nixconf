@@ -259,6 +259,7 @@
           extensions.ts-error-translator.enable = true;
         };
         yaml.enable = true;
+        zig.enable = true;
       };
 
       utility.oil-nvim = {

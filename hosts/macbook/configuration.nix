@@ -27,6 +27,7 @@ in
   };
 
   environment.systemPath = [
+    "${home}/.bun/bin"
     "/opt/homebrew/bin"
     "/opt/homebrew/sbin"
   ];
@@ -87,13 +88,12 @@ in
     stateVersion = 6;
     primaryUser = user;
     activationScripts.postActivation.text = ''
+      install -d -m 0755 -o ${user} -g staff ${home}/.config
       install -d -m 0755 -o ${user} -g staff ${home}/.config/ghostty
       ln -sfn /etc/ghostty/config ${home}/.config/ghostty/config
       chown -h ${user}:staff ${home}/.config/ghostty/config
-      mkdir -p ${home}/.config/opencode
-      chown -R ${user} ${home}/.config/opencode
-      mkdir -p ${home}/.config/gh
-      chown -R ${user} ${home}/.config/gh
+      install -d -m 0755 -o ${user} -g staff ${home}/.config/opencode
+      install -d -m 0755 -o ${user} -g staff ${home}/.config/gh
       install -d -m 0755 -o ${user} -g staff ${home}/.aws
       ln -sfn /etc/aws/config ${home}/.aws/config
       chown -h ${user}:staff ${home}/.aws/config

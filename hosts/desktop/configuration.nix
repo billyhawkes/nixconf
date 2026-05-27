@@ -8,7 +8,6 @@ in
     ../../modules/common.nix
     ../../modules/system.nix
     ../../modules/desktop.nix
-    ../../modules/development.nix
     ../../modules/ai.nix
     ../../modules/gaming.nix
     ../../modules/secrets.nix
