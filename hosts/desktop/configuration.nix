@@ -50,5 +50,11 @@ in
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJs3L3ILSlszfrfdIql6BoMzUwvHxqvykpLCIkFg4/+K billyhawkes02@gmail.com"
   ];
 
+  system.activationScripts.bunfig.text = ''
+    install -d -m 0755 -o billy -g users /home/billy
+    ln -sfn /etc/bunfig.toml /home/billy/.bunfig.toml
+    chown -h billy:users /home/billy/.bunfig.toml
+  '';
+
   system.stateVersion = "24.11";
 }

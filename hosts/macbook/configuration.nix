@@ -97,6 +97,8 @@ in
       install -d -m 0755 -o ${user} -g staff ${home}/.aws
       ln -sfn /etc/aws/config ${home}/.aws/config
       chown -h ${user}:staff ${home}/.aws/config
+      ln -sfn /etc/bunfig.toml ${home}/.bunfig.toml
+      chown -h ${user}:staff ${home}/.bunfig.toml
       printf '[user]\n  name = Billy Hawkes\n  email = billyhawkes02@gmail.com\n' > ${home}/.gitconfig
       chown ${user}:staff ${home}/.gitconfig
     '';

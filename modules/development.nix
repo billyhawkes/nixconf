@@ -5,6 +5,11 @@
   ];
 
   environment = {
+    etc."bunfig.toml".text = ''
+      [install]
+      minimumReleaseAge = 259200
+    '';
+
     systemPackages = with pkgs; [
       mysql84
 
