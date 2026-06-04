@@ -24,15 +24,34 @@
 
     gamescope = {
       enable = true;
-      args = [ "--rt" "--prefer-vk-device" "1002:744c" ];
+      args = [
+        "--rt"
+        "--prefer-vk-device"
+        "1002:744c"
+      ];
     };
   };
 
   boot.kernelPackages = pkgs.linuxPackages_zen;
 
+  hardware = {
+    steam-hardware.enable = true;
+    uinput.enable = true;
+  };
+
   security.pam.loginLimits = [
-    { domain = "*"; item = "nofile"; type = "soft"; value = "8192"; }
-    { domain = "*"; item = "nofile"; type = "hard"; value = "1048576"; }
+    {
+      domain = "*";
+      item = "nofile";
+      type = "soft";
+      value = "8192";
+    }
+    {
+      domain = "*";
+      item = "nofile";
+      type = "hard";
+      value = "1048576";
+    }
   ];
 
   environment.systemPackages = with pkgs; [

@@ -40,6 +40,7 @@ in
     ];
     casks = [
       "ghostty"
+      "steam"
       "google-chrome"
       "discord"
       "tailscale-app"
@@ -48,6 +49,9 @@ in
       "moonlight"
       "rectangle"
     ];
+    masApps = {
+      Xcode = 497799835;
+    };
   };
 
   services.skhd = {

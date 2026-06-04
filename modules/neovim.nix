@@ -210,8 +210,8 @@
           defaults.file_ignore_patterns = [
             "node_modules/"
             ".agents/"
-            "/build/"
-            "/dist/"
+            "build/"
+            "dist/"
             "bun%.lock"
             "%.git/"
           ];

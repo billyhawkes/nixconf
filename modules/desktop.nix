@@ -6,6 +6,8 @@
 
     displayManager.sddm.enable = true;
 
+    displayManager.defaultSession = "plasmax11";
+
     displayManager.autoLogin = {
       enable = true;
       user = "billy";

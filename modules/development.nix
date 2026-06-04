@@ -42,6 +42,7 @@
       awscli2
       lazygit
       gh
+      ripgrep
     ];
   };
 }
