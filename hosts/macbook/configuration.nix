@@ -37,6 +37,9 @@ in
     brews = [
       "direnv" # TASK: Move to pkgs when build is fixed
       "odin"
+      "sdl3"
+      "pkg-config"
+      "just"
     ];
     casks = [
       "ghostty"

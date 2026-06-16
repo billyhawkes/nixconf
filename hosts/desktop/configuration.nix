@@ -12,9 +12,12 @@ in
     ../../modules/gaming.nix
     ../../modules/secrets.nix
     ../../modules/tailscale.nix
+    ../../modules/development.nix
   ];
 
   networking.hostName = hostName;
+
+  environment.sessionVariables.PATH = [ "/home/billy/.bun/bin" ];
 
   preferences = {
     tailscale = {
@@ -39,6 +42,7 @@ in
     packages = with pkgs; [
       discord
       firefox
+      ghostty
       pavucontrol
       pamixer
     ];

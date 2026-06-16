@@ -2,7 +2,10 @@
 
 {
   services = {
-    xserver.enable = true;
+    xserver = {
+      enable = true;
+      xkb.options = "caps:escape";
+    };
 
     displayManager.sddm.enable = true;
 
