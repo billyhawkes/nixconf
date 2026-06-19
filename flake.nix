@@ -11,6 +11,10 @@
       url = "github:NotAShelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    rustfs = {
+      url = "github:rustfs/rustfs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -20,6 +24,7 @@
       nix-darwin,
       nixpkgs,
       nvf,
+      rustfs,
       sops-nix,
       ...
     }:
@@ -38,6 +43,9 @@
       darwinConfigurations = {
         macbook = nix-darwin.lib.darwinSystem {
           system = "aarch64-darwin";
+          specialArgs = {
+            inherit rustfs;
+          };
           modules = [
             nvf.darwinModules.default
             ./hosts/macbook/configuration.nix

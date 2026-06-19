@@ -2,6 +2,9 @@
 let
   user = "billyhawkes";
   home = "/Users/${user}";
+  opencodeConfig = import ../../modules/opencode.json.nix {
+    baseURL = "http://desktop:11434/v1";
+  };
   postgresql = pkgs.postgresql_18;
 in
 {
@@ -34,8 +37,12 @@ in
 
   homebrew = {
     enable = true;
+    taps = [
+      "rustfs/homebrew-tap"
+    ];
     brews = [
       "direnv" # TASK: Move to pkgs when build is fixed
+      "rustfs"
       "odin"
       "sdl3"
       "pkg-config"
@@ -51,6 +58,7 @@ in
       "linearmouse"
       "moonlight"
       "rectangle"
+      "syncthing"
     ];
     masApps = {
       Xcode = 497799835;
@@ -100,6 +108,8 @@ in
       ln -sfn /etc/ghostty/config ${home}/.config/ghostty/config
       chown -h ${user}:staff ${home}/.config/ghostty/config
       install -d -m 0755 -o ${user} -g staff ${home}/.config/opencode
+      ln -sfn /etc/opencode/opencode.jsonc ${home}/.config/opencode/opencode.jsonc
+      chown -h ${user}:staff ${home}/.config/opencode/opencode.jsonc
       install -d -m 0755 -o ${user} -g staff ${home}/.config/gh
       install -d -m 0755 -o ${user} -g staff ${home}/.aws
       ln -sfn /etc/aws/config ${home}/.aws/config
@@ -141,6 +151,8 @@ in
     sso_region = ca-central-1
     sso_registration_scopes = sso:account:access
   '';
+
+  environment.etc."opencode/opencode.jsonc".text = opencodeConfig;
 
   services.postgresql = {
     enable = true;
