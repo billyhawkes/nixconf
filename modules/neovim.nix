@@ -186,9 +186,11 @@
         statusline.enable = true;
         surround.enable = true;
       };
-      notes.todo-comments = {
-        enable = true;
-        setupOpts.signs = false;
+      notes = {
+        todo-comments = {
+          enable = true;
+          setupOpts.signs = false;
+        };
       };
       telescope = {
         enable = true;
@@ -249,7 +251,10 @@
         html.enable = true;
         json.enable = true;
         lua.enable = true;
-        markdown.enable = true;
+        markdown = {
+          enable = true;
+          lsp.servers = [ "markdown-oxide" ];
+        };
         nix.enable = true;
         odin.enable = true;
         python.enable = true;

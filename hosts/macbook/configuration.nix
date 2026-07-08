@@ -15,6 +15,9 @@ in
 
   nix.settings.build-users-group = "nixbld";
 
+  documentation.doc.enable = false;
+  system.tools.darwin-uninstaller.enable = false;
+
   users.users.${user}.home = home;
 
   programs = {
@@ -35,14 +38,38 @@ in
     "/opt/homebrew/sbin"
   ];
 
+  environment.systemPackages = with pkgs; [
+    rclone
+  ];
+
   homebrew = {
     enable = true;
     taps = [
-      "rustfs/homebrew-tap"
+      {
+        name = "rustfs/tap";
+        trusted = true;
+      }
+      {
+        name = "siderolabs/tap";
+        trusted = true;
+      }
     ];
     brews = [
       "direnv" # TASK: Move to pkgs when build is fixed
-      "rustfs"
+      "helm"
+      "kubectl"
+      {
+        name = "rustfs/tap/rustfs";
+        trusted = true;
+      }
+      {
+        name = "siderolabs/tap/talosctl";
+        trusted = true;
+      }
+      {
+        name = "benbjohnson/litestream/litestream";
+        trusted = true;
+      }
       "odin"
       "sdl3"
       "pkg-config"
@@ -50,15 +77,17 @@ in
     ];
     casks = [
       "ghostty"
+      "headlamp"
       "steam"
       "google-chrome"
       "discord"
       "tailscale-app"
       "docker-desktop"
+      "linear-linear"
       "linearmouse"
       "moonlight"
       "rectangle"
-      "syncthing"
+      "syncthing-app"
     ];
     masApps = {
       Xcode = 497799835;
@@ -71,6 +100,7 @@ in
       cmd + shift - 1 : open -a 'Google Chrome'
       cmd + shift - 2 : open -a 'Ghostty'
       cmd + shift - 3 : open -a 'Discord'
+      cmd + shift - 0 : /usr/bin/open '/Applications/Linear.app'
     '';
   };
 

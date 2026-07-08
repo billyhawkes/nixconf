@@ -36,6 +36,22 @@ builtins.toJSON (
     };
     model = "openai/gpt-5.5";
     small_model = "openai/gpt-5.3-codex-spark";
+    mcp = {
+      localhost = {
+        type = "remote";
+        url = "http://localhost:3000/api/mcp";
+        enabled = true;
+      };
+      shadcn = {
+        type = "local";
+        command = [
+          "npx"
+          "shadcn@latest"
+          "mcp"
+        ];
+        enabled = true;
+      };
+    };
     references = {
       effect = {
         repository = "effect-TS/effect-smol";
