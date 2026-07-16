@@ -103,7 +103,16 @@
           ];
         };
       };
-      comments.comment-nvim.enable = true;
+      comments.comment-nvim = {
+        enable = true;
+        setupOpts.pre_hook = lib.generators.mkLuaInline ''
+          function(ctx)
+            if vim.bo.filetype == 'env' then
+              return vim.bo.commentstring
+            end
+          end
+        '';
+      };
       diagnostics = {
         enable = true;
         config = {

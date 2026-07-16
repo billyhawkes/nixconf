@@ -56,6 +56,7 @@ in
     ];
     brews = [
       "direnv" # TASK: Move to pkgs when build is fixed
+      "ffmpeg"
       "helm"
       "kubectl"
       {
@@ -74,9 +75,11 @@ in
       "sdl3"
       "pkg-config"
       "just"
+      "whisper-cpp"
     ];
     casks = [
       "ghostty"
+      "hammerspoon"
       "headlamp"
       "steam"
       "google-chrome"
@@ -86,6 +89,7 @@ in
       "linear-linear"
       "linearmouse"
       "moonlight"
+      "obsidian"
       "rectangle"
       "syncthing-app"
     ];
@@ -141,6 +145,9 @@ in
       ln -sfn /etc/opencode/opencode.jsonc ${home}/.config/opencode/opencode.jsonc
       chown -h ${user}:staff ${home}/.config/opencode/opencode.jsonc
       install -d -m 0755 -o ${user} -g staff ${home}/.config/gh
+      install -d -m 0755 -o ${user} -g staff ${home}/.hammerspoon
+      ln -sfn /etc/hammerspoon/init.lua ${home}/.hammerspoon/init.lua
+      chown -h ${user}:staff ${home}/.hammerspoon/init.lua
       install -d -m 0755 -o ${user} -g staff ${home}/.aws
       ln -sfn /etc/aws/config ${home}/.aws/config
       chown -h ${user}:staff ${home}/.aws/config
@@ -184,11 +191,20 @@ in
 
   environment.etc."opencode/opencode.jsonc".text = opencodeConfig;
 
+  environment.etc."hammerspoon/init.lua".text = builtins.readFile ./hammerspoon.lua;
+
   services.postgresql = {
     enable = true;
     package = postgresql;
     extraPlugins = with postgresql.pkgs; [
-      postgis
+      (postgis.override {
+        gdalMinimal = pkgs.gdalMinimal.overrideAttrs (_: {
+          doCheck = false;
+          doInstallCheck = false;
+          checkPhase = "";
+          installCheckPhase = "";
+        });
+      })
       pgvector
     ];
     dataDir = "${home}/.local/share/postgresql/18";

@@ -1,1 +1,1 @@
-nh darwin switch . -H macbook --update
+nh darwin switch . -H macbook

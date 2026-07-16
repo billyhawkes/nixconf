@@ -34,8 +34,6 @@ builtins.toJSON (
         name = "OpenAI";
       };
     };
-    model = "openai/gpt-5.5";
-    small_model = "openai/gpt-5.3-codex-spark";
     mcp = {
       localhost = {
         type = "remote";
