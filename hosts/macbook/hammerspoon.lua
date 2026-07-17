@@ -23,6 +23,50 @@ local transcriber = nil
 local modelDownloader = nil
 local recordingStartedAt = nil
 local stopping = false
+local outputDevice = nil
+local outputWasMuted = nil
+local outputVolume = nil
+local volumeFallback = false
+
+local function muteOutput()
+  outputDevice = hs.audiodevice.defaultOutputDevice()
+  if outputDevice == nil then
+    hs.printf("No default output audio device")
+    return
+  end
+
+  outputWasMuted = outputDevice:outputMuted()
+  if outputWasMuted == true then
+    return
+  end
+
+  if outputWasMuted == false and outputDevice:setOutputMuted(true) then
+    return
+  end
+
+  outputVolume = outputDevice:outputVolume()
+  if outputVolume ~= nil then
+    volumeFallback = outputDevice:setOutputVolume(0)
+  end
+  if not volumeFallback then
+    hs.printf("Could not mute or lower output audio: %s", outputDevice:name())
+  end
+end
+
+local function restoreOutput()
+  if outputDevice ~= nil then
+    if volumeFallback and outputVolume ~= nil then
+      outputDevice:setOutputVolume(outputVolume)
+    elseif outputWasMuted ~= nil then
+      outputDevice:setOutputMuted(outputWasMuted)
+    end
+  end
+
+  outputDevice = nil
+  outputWasMuted = nil
+  outputVolume = nil
+  volumeFallback = false
+end
 
 local function notify(message)
   hs.alert.closeAll()
@@ -142,9 +186,11 @@ local function startRecording()
   os.remove(audioPath)
   recordingStartedAt = hs.timer.secondsSinceEpoch()
   stopping = false
+  muteOutput()
 
   recorder = hs.task.new(ffmpeg, function(exitCode, _, stderr)
     recorder = nil
+    restoreOutput()
     if not stopping then
       hs.printf("Audio recording failed (%d): %s", exitCode, stderr)
       notify("Recording failed")
@@ -170,6 +216,7 @@ local function startRecording()
     showListening()
   else
     recorder = nil
+    restoreOutput()
     notify("Could not start recording")
   end
 end
