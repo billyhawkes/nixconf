@@ -10,8 +10,6 @@
       };
       viAlias = true;
       vimAlias = true;
-      withNodeJs = true;
-      withPython3 = true;
       lineNumberMode = "number";
       searchCase = "smart";
       preventJunkFiles = true;
@@ -38,21 +36,13 @@
       };
 
       extraPackages = with pkgs; [
-        astro-language-server
-        dockerfile-language-server
-        nil
         nixfmt
         oxlint
         oxfmt
-        python313Packages.python-lsp-server
-        rust-analyzer
         rustfmt
         statix
         stylua
-        tailwindcss-language-server
         typos-lsp
-        typescript
-        yaml-language-server
       ];
 
       clipboard = {
@@ -69,7 +59,6 @@
             auto_show = true;
             auto_show_delay_ms = 200;
           };
-          fuzzy.implementation = "lua";
           sources.default = [
             "lsp"
             "path"
@@ -77,7 +66,6 @@
           ];
         };
       };
-      autopairs.nvim-autopairs.enable = true;
       binds.whichKey = {
         enable = true;
         setupOpts = {
@@ -102,16 +90,6 @@
             }
           ];
         };
-      };
-      comments.comment-nvim = {
-        enable = true;
-        setupOpts.pre_hook = lib.generators.mkLuaInline ''
-          function(ctx)
-            if vim.bo.filetype == 'env' then
-              return vim.bo.commentstring
-            end
-          end
-        '';
       };
       diagnostics = {
         enable = true;
@@ -159,26 +137,16 @@
       };
       git = {
         enable = true;
-        gitsigns = {
-          enable = true;
-          setupOpts.signs = {
-            add.text = "+";
-            change.text = "~";
-            delete.text = "_";
-            topdelete.text = "‾";
-            changedelete.text = "~";
-          };
-        };
         vim-fugitive.enable = true;
       };
       lsp = {
         enable = true;
         inlayHints.enable = true;
         lspkind.enable = true;
-        lspconfig.enable = true;
         presets.tailwindcss-language-server.enable = true;
+        presets.typescript-go.enable = true;
         servers = {
-          ols = {
+          ols = lib.mkIf pkgs.stdenv.isDarwin {
             cmd = lib.mkForce [ "/opt/homebrew/bin/ols" ];
             init_options = {
               odin_command = "/opt/homebrew/bin/odin";
@@ -188,10 +156,20 @@
         };
       };
       mini = {
-        ai = {
+        ai.enable = true;
+        comment.enable = true;
+        diff = {
           enable = true;
-          setupOpts.n_lines = 500;
+          setupOpts.view = {
+            style = "sign";
+            signs = {
+              add = "+";
+              change = "~";
+              delete = "_";
+            };
+          };
         };
+        pairs.enable = true;
         statusline.enable = true;
         surround.enable = true;
       };
@@ -247,16 +225,14 @@
         name = "tokyonight";
         style = "night";
       };
-      treesitter = {
-        enable = true;
-        context.enable = true;
-      };
+      treesitter.context.enable = true;
 
       languages = {
         enableTreesitter = true;
         astro.enable = true;
         bash.enable = true;
         css.enable = true;
+        docker.enable = true;
         html.enable = true;
         json.enable = true;
         lua.enable = true;
@@ -268,9 +244,14 @@
         odin.enable = true;
         python.enable = true;
         rust.enable = true;
+        tsx = {
+          enable = true;
+          lsp.enable = false;
+        };
         typescript = {
           enable = true;
           extensions.ts-error-translator.enable = true;
+          lsp.enable = false;
         };
         yaml.enable = true;
         zig.enable = true;
@@ -286,7 +267,7 @@
 
       augroups = [
         {
-          name = "kickstart-highlight-yank";
+          name = "highlight-yank";
           clear = true;
         }
       ];
@@ -294,7 +275,7 @@
       autocmds = [
         {
           event = [ "TextYankPost" ];
-          group = "kickstart-highlight-yank";
+          group = "highlight-yank";
           command = "lua vim.hl.on_yank()";
           desc = "Highlight when yanking (copying) text";
         }

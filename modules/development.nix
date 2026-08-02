@@ -33,12 +33,11 @@ in
         shellcheck
         cmake
 
-        # Typescrypt
+        # TypeScript
         bun
         nodejs_24
         prettierd
         typescript
-        typescript-language-server
         vscode-langservers-extracted
 
         # Rust
