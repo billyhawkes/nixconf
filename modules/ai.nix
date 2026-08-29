@@ -9,6 +9,7 @@
     package = pkgs.ollama-rocm;
     host = "0.0.0.0";
     port = 11434;
+    loadModels = [ "bge-m3" ];
     environmentVariables = {
       HIP_VISIBLE_DEVICES = "0"; # only the 7800 XT
       ROCR_VISIBLE_DEVICES = "0"; # belt and suspenders

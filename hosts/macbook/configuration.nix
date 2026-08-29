@@ -26,9 +26,9 @@ in
     zsh = {
       enable = true;
       interactiveShellInit = ''
+        export PATH="${home}/.bun/bin:$PATH"
         eval "$(/opt/homebrew/bin/brew shellenv)"
         eval "$(direnv hook zsh)"
-        alias opencode='opencode2'
       '';
     };
   };
@@ -59,6 +59,7 @@ in
       "direnv" # TASK: Move to pkgs when build is fixed
       "ffmpeg"
       "helm"
+      "herdr"
       "kubectl"
       {
         name = "rustfs/tap/rustfs";
@@ -93,6 +94,9 @@ in
       "obsidian"
       "rectangle"
       "syncthing-app"
+      "opencode-desktop"
+      "cloudflare-warp"
+      "whatsapp"
     ];
     masApps = {
       Xcode = 497799835;
@@ -142,6 +146,9 @@ in
       install -d -m 0755 -o ${user} -g staff ${home}/.config/ghostty
       ln -sfn /etc/ghostty/config ${home}/.config/ghostty/config
       chown -h ${user}:staff ${home}/.config/ghostty/config
+      install -d -m 0755 -o ${user} -g staff ${home}/.config/herdr
+      ln -sfn /etc/herdr/config.toml ${home}/.config/herdr/config.toml
+      chown -h ${user}:staff ${home}/.config/herdr/config.toml
       install -d -m 0755 -o ${user} -g staff ${home}/.config/opencode
       ln -sfn /etc/opencode/opencode.jsonc ${home}/.config/opencode/opencode.jsonc
       chown -h ${user}:staff ${home}/.config/opencode/opencode.jsonc
@@ -191,6 +198,27 @@ in
   '';
 
   environment.etc."opencode/opencode.jsonc".text = opencodeConfig;
+
+  environment.etc."ghostty/config".text = ''
+    theme = TokyoNight
+  '';
+
+  environment.etc."herdr/config.toml".text = ''
+    onboarding = false
+
+    [theme]
+    name = "tokyo-night"
+
+    [terminal]
+    default_shell = "/bin/zsh"
+    shell_mode = "auto"
+
+    [keys]
+    prefix = "backtick"
+
+    [ui]
+    prompt_new_tab_name = false
+  '';
 
   environment.etc."hammerspoon/init.lua".text = builtins.readFile ./hammerspoon.lua;
 

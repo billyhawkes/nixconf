@@ -1,118 +1,203 @@
-# AGENTS.md
+# AGENTS
 
-Guidance for agents and automation working in this Nix configuration repo.
+## Core Rules
 
-## Project Shape
+- If `PROJECT_AGENTS.md` exists in the repository root, read it immediately and treat it as additional mandatory project instructions.
+- Prefer the smallest correct change that fits the existing architecture.
+- Keep frontend and backend concerns separated unless a feature explicitly spans both.
+- Use project conventions already present in nearby files before introducing new patterns.
+- Do not edit generated or registry-managed files unless explicitly requested.
 
-This repo is a personal flake-based Nix configuration.
+## i18n
 
-- `flake.nix` is the entry point.
-- `nixosConfigurations.desktop` builds the Linux desktop host.
-- `darwinConfigurations.macbook` builds the macOS/nix-darwin host.
-- `hosts/desktop/configuration.nix` composes the desktop host.
-- `hosts/macbook/configuration.nix` composes the MacBook host.
-- `modules/*.nix` contains reusable configuration modules.
-- `secrets/default.enc.yaml` is encrypted with SOPS and must stay encrypted.
-- `scripts/*.sh` contains convenience deployment and setup commands.
+- English and French are required for all public-facing strings.
+- Translate public-facing strings with paraglide.js and the Vite plugin.
+- Store translations in `src/messages/en.json` and `src/messages/fr.json`.
+- Import generated messages from `src/paraglide/messages` instead of hardcoding UI copy.
 
-## Mutation Rules
+## Architecture
 
-Make the smallest correct change. Prefer editing an existing module over adding a new abstraction.
+The application is divided into two areas: frontend and backend.
 
-Use these locations for common changes:
+### Frontend
 
-- Shared baseline settings and packages: `modules/common.nix`
-- Development tools, language servers, CLIs, and Neovim import wiring: `modules/development.nix`
-- Neovim and nvf configuration: `modules/neovim.nix`
-- Linux desktop UI, audio, Bluetooth, display, and fonts: `modules/desktop.nix`
-- Linux base system, SSH, firewall, Git, locale, and Nix GC: `modules/system.nix`
-- Gaming, Steam, GameMode, Gamescope, kernel package, and GPU tuning: `modules/gaming.nix`
-- Ollama and local AI services: `modules/ai.nix`
-- Tailscale options and service wiring: `modules/tailscale.nix`
-- SOPS setup only: `modules/secrets.nix`
-- Desktop-only user packages and groups: `hosts/desktop/configuration.nix`
-- Mac-only Homebrew casks, skhd bindings, macOS defaults, and Darwin services: `hosts/macbook/configuration.nix`
+- React with TanStack Start and TanStack Router.
+- shadcn UI primitives and installed registry components.
+- Effect service state for data loading and mutations.
+- Prefer existing app form, table, dialog, and data-fetching patterns before adding new abstractions.
 
-If a feature should be reusable, create `modules/<feature>.nix` and import it explicitly from the host that needs it. Do not import a module globally unless both hosts should receive it.
+### Client State And Mutations
 
-## Simple Change Recipes
+- Define server queries with Effect Atom and keep authoritative query atoms wrapped in `Atom.optimistic(...)` when previous successful data should remain visible during refresh.
+- Default to `Atom.optimisticFn(...)` for create, update, and delete operations when the expected client-side result can be calculated safely.
+- Do not expose a plain `ApiClient.mutation(...)` directly to a form when an existing query atom can be updated optimistically and rolled back on failure.
+- Reconcile optimistic state with authoritative server data after a successful mutation by invalidating the relevant queries.
+- Keep invalidation policy beside the mutation definition rather than repeating domain dependencies in form submit handlers when practical.
+- Use a plain mutation when the result cannot be predicted safely, including imports, generated results, complex server transformations, and destructive operations with unknown side effects.
+- For paginated, filtered, sorted, or localized query families, do not guess which cached results a mutation affects. Scope the optimistic mutation to an explicit query instance, or introduce a canonical entity store when updates must appear across every query.
+- Name query-retention and mutation-optimism concepts precisely: `Atom.optimistic(queryAtom)` preserves provisional or previous query state, while `Atom.optimisticFn(...)` applies an optimistic mutation reducer with rollback.
+- Use `src/agent-examples/service/atom.ts` in the KrakStack reference repository as the required starting pattern for optimistic CRUD atoms, then adapt it to the application's real `AtomHttpApi` query and mutation atoms.
 
-Add a package to both machines:
+### Backend
 
-1. Add it to `environment.systemPackages` in `modules/common.nix`.
-2. Run `nixfmt modules/common.nix`.
-3. Run `nix flake check`.
+- Effect application services.
+- Effect Postgres and Drizzle ORM for database access.
+- Effect HttpApi, HttpServer, OpenAPI, and OpenTelemetry for API and runtime concerns.
+- Effect durable workflows for long-running, retryable, or resumable orchestration.
 
-Add a development package:
+## Folder Structure
 
-1. Add it to `environment.systemPackages` in `modules/development.nix`.
-2. Keep packages grouped by purpose when possible.
-3. Run `nixfmt modules/development.nix`.
-4. Run `nix flake check`.
+- `public/` contains static assets.
+- `scripts/` contains build and utility scripts.
+- `tmp/` contains local temporary files that should not be committed.
+- `src/components/` contains React components.
+- `src/components/ui/` contains shadcn-managed primitives. Do not edit directly.
+- `src/db/` contains Drizzle schema definitions.
+- `src/hooks/` contains shared React hooks.
+- `src/lib/` contains shared utilities.
+- `src/messages/` contains i18n source files.
+- `src/paraglide/` contains generated i18n runtime. Do not edit directly.
+- `src/routes/` contains TanStack Start file-based routes.
+- `src/routes/docs/` contains documentation pages.
+- `src/services/` contains Effect service definitions, API handlers, schemas, and client state.
+- `src/api.ts` defines the root Effect API.
 
-Add a desktop-only Linux package:
+## Code Practices
 
-1. Add it to `users.users.billy.packages` in `hosts/desktop/configuration.nix` if it is user-facing.
-2. Add it to a relevant `modules/*.nix` package list if it is part of a feature area.
-3. Run `nixfmt` on the changed file.
-4. Run `nix flake check`.
+- Prefer arrow functions `() => void` over function expressions `function () {}` except where Effect generator APIs require `function*`.
+- Avoid `as any`, `as Type`, and `as unknown` unless absolutely necessary.
+- Use Effect `Schema` for validation. Do not use Zod or other validation libraries.
+- Prefer Effect-native integrations over ad hoc boundaries: use `FetchHttpClient`/`HttpClient` instead of raw `fetch`, Effect `Schema` codecs such as `Schema.fromJsonString(...)` and `HttpClientResponse.schemaBodyJson(...)` instead of manual `JSON.parse` or custom validation, and typed Effect errors instead of broad `try`/`tryPromise` wrappers.
+- Use `Effect.try` or `Effect.tryPromise` only when wrapping a non-Effect API that has no suitable Effect adapter; keep the boundary as small as possible and map failures into domain-specific errors.
+- Annotate schemas with `.annotate({ identifier: "Name" })`.
+- Use `Schema.toStandardSchemaV1(...)` when integrating Effect schemas with form validators.
+- Use `Effect.fn` for service methods when practical.
+- Add OpenTelemetry through Effect runtime patterns where relevant.
 
-Add a Mac app:
+## Schema
 
-1. Add CLI tools to `homebrew.brews` or GUI apps to `homebrew.casks` in `hosts/macbook/configuration.nix` when they are Homebrew-managed.
-2. Prefer Nix packages in `modules/common.nix` or `modules/development.nix` when they build reliably on Darwin.
-3. Run `nixfmt hosts/macbook/configuration.nix`.
-4. Run `nix flake check`.
+- Use Effect `Schema` for all parsing, decoding, validation, and type-safe boundary checks.
+- Define reusable schemas in the nearest `schema.ts` file and annotate them with `.annotate({ identifier: "Name" })`.
+- Validate untrusted inputs at boundaries using Effect schema decoders, including API payloads, query params, route params, form inputs, external API responses, environment variables, JSON blobs, and persisted data.
+- Do not write custom runtime validation such as `typeof value === "object"`, `Array.isArray(value)`, manual property checks, custom type guards, or ad hoc `JSON.parse` validation when an Effect `Schema` can express the shape.
+- Prefer Effect codecs and helpers such as `Schema.decodeUnknown`, `Schema.decodeUnknownSync`, `Schema.fromJsonString(...)`, and `HttpClientResponse.schemaBodyJson(...)` over manual parsing.
+- Keep validation failures typed and explicit. Map schema parse errors into domain-specific errors where needed instead of throwing broad errors.
+- Use custom predicates only inside Effect schema refinements or filters, and only when the rule cannot be represented with built-in schema combinators.
 
-Enable a feature on one host:
+## Services
 
-1. Put reusable implementation in `modules/<feature>.nix`.
-2. Import it from only the relevant `hosts/<host>/configuration.nix`.
-3. If the feature needs simple knobs, expose them under `options.preferences.<feature>` like `modules/tailscale.nix`.
-4. Set host-specific values in the host configuration.
+Use service-based design for CRUD, features, integrations, and related domain concerns.
 
-Change Tailscale settings:
+A typical service should use this structure:
 
-1. Edit `preferences.tailscale` in `hosts/desktop/configuration.nix` for host-level values.
-2. Edit `modules/tailscale.nix` only when changing the reusable Tailscale behavior.
-3. Keep secrets referenced through SOPS paths; do not inline auth keys.
+- `src/services/<name>/schema.ts` defines Effect schemas, payload schemas, route params, and standard schema exports.
+- `src/services/<name>/index.ts` implements the Effect `Context.Service` and exposes production and test layers where needed.
+- `src/services/<name>/workflows.ts` defines versioned durable workflows and their activity orchestration.
+- `src/services/<name>/api.group.ts` defines the HttpApiGroup contract.
+- `src/services/<name>/api.builder.ts` wires the service into the root API with auth and error mapping.
+- `src/services/<name>/client/atom.ts` defines query and mutation atoms.
+- `src/services/<name>/client/form.tsx` defines reusable create/edit forms.
+- `src/services/<name>/client/table.tsx` defines data tables and row actions.
 
-## Verification
+Service methods should accept object inputs, scope by the current user or tenant where applicable, and avoid exposing cross-tenant data.
 
-Use the narrowest useful verification first, then the full flake check.
+## Workflows
 
-- Format a Nix file: `nixfmt path/to/file.nix`
-- Check the flake: `nix flake check`
-- Build or switch desktop: `nix shell nixpkgs/nixos-unstable#nh -c nh os switch ".#desktop"`
-- Build or switch MacBook: `nix shell nixpkgs/nixos-unstable#nh -c nh darwin switch ".#macbook"`
-- Existing desktop deploy helper: `./scripts/deploy.sh`
-- Existing MacBook helper: `./scripts/macbook.sh`
+Use Effect durable workflows for operations that must survive interruption, retry individual steps, resume later, or coordinate multiple services over time.
 
-Do not run switch/deploy commands unless the user asks or the task clearly requires applying the system configuration. `nix flake check` is usually enough for validation.
+- Define the shared `ClusterWorkflowEngine` layer in `src/services/workflow.ts` and provide its database and runner dependencies at the application composition root.
+- Define service-owned workflows in `src/services/<name>/workflows.ts` with `Workflow.make(...)` and export their `toLayer(...)` implementation.
+- Version workflow and activity names, such as `CreateExampleV1` and `PersistExampleV1`. Treat persisted workflow names and payload schemas as compatibility boundaries.
+- Give every workflow a stable idempotency key derived from a caller-provided request or domain identifier.
+- Wrap side effects in `Activity.make(...)` and define serializable Effect schemas for workflow payloads, successes, and typed errors.
+- Keep HTTP, authentication, and request-specific concerns at the API boundary. Pass validated actor or tenant identifiers into the workflow payload.
+- Keep durable orchestration in `workflows.ts`; keep reusable domain and persistence operations in the service.
+- Compose each workflow layer with its service dependencies, then provide the shared workflow engine layer at the application root.
 
-## Safety Rules
+## API
 
-- Never commit or write plaintext secrets.
-- Do not decrypt or edit `secrets/default.enc.yaml` unless explicitly asked.
-- Keep `secrets/default.enc.yaml` encrypted and managed by SOPS.
-- Do not modify `.sops.yaml` unless changing recipient policy intentionally.
-- Do not edit `hosts/desktop/hardware.nix` unless hardware changed or the user asks.
-- Preserve `system.stateVersion` values unless the user explicitly requests a state version migration.
-- Keep Linux-only settings out of the Darwin host and Darwin-only settings out of NixOS modules imported by Linux.
-- Avoid broad rewrites, compatibility shims, or new helper modules without a concrete need.
-- Do not remove user packages, SSH keys, service settings, or firewall ports unless the user asks.
+- Define the root API in `src/api.ts`.
+- Merge service API groups into the root API with `.add(...)`.
+- Keep OpenAPI annotations on the root API.
+- OpenAPI documentation is served at `/api/docs`.
+- MCP server support is served at `/api/mcp` and should use `@krak-stack/httpapi-mcp`.
+- CLI support should use `@krak-stack/httpapi-cli`.
 
-## Style
+## Tooling
 
-- Use `nixfmt` formatting.
-- Keep package lists alphabetized only when the surrounding list already follows that style; otherwise preserve local grouping.
-- Prefer explicit imports in host files over implicit global behavior.
-- Keep comments short and useful.
-- Match existing Nix style: simple attribute sets, direct module imports, and `with pkgs; [ ... ]` for package lists.
-- For simple toggles, prefer typed options under `preferences.*` and host-level values.
+- Use KrakStack Components where possible and keep installed registry components current.
+- Install KrakStack registry items with shadcn using the `@krak-stack` registry alias configured in `components.json`; do not copy registry item files manually unless explicitly requested.
+- Before creating a custom component, check the shadcn MCP server for a compatible component or registry item.
+- Use shadcn through the registry workflow. If needed, initialize MCP with `bunx --bun shadcn@latest mcp init --client opencode`.
 
-## Git
+## Testing
 
-- Do not create commits unless explicitly asked.
-- Do not revert unrelated user changes.
-- Before committing, inspect status, staged changes, unstaged changes, and recent commit style.
+- Use Vitest with `@effect/vitest`.
+- Add tests beside code when practical using `*.test.ts` or `*.test.tsx`.
+- Import `describe`, `expect`, and `it` from `@effect/vitest`.
+- Use `it.effect` for Effect programs and provide dependencies with `Effect.provide(...)`.
+- Prefer fresh per-test layers so mutable state does not leak.
+- Use suite-shared layers only for expensive resources and reset state between tests.
+- Backend and service tests must use the real Postgres test database through `TEST_DATABASE_URL`.
+- Never point tests at `DATABASE_URL`.
+- The test database is provided externally. Set `TEST_DATABASE_URL` in `.env` or the shell before DB tests.
+- Expose service `testLayer`s for tests, backed by `DB.testLayer` where database access is needed.
+- Run migrations against the test database before DB tests and reset affected tables between tests.
+- Use Drizzle queries for test setup and cleanup where possible.
+- Avoid raw SQL unless a migration or lifecycle task requires it.
+
+## End-to-End Testing
+
+- Use Playwright for browser-level tests of user journeys, UI behavior, routing, authentication, and frontend-to-API integrations.
+- Keep end-to-end tests in `e2e/` as `*.spec.ts` files and share repeated setup through focused helpers.
+- Run `bun run test:e2e:install` once when Chromium is not installed, `bun run test:e2e` for the full suite, and `bun run test:e2e:ui` when interactive debugging is useful.
+- Use the Playwright CLI to exercise changed UI and integrations as you build, not only after implementation is complete. Start with the smallest relevant spec or title filter, inspect the browser result, and rerun after each meaningful change before running the full suite.
+- Run a focused test with `bun run test:e2e -- e2e/<name>.spec.ts` or `bun run test:e2e -- --grep "<test name>"`.
+- Prefer assertions against user-visible outcomes and accessible locators such as `getByRole`, `getByLabel`, and `getByText`. Avoid implementation-coupled selectors and arbitrary sleeps.
+- Cover complete high-value flows across UI and API boundaries. Keep lower-level edge cases in Vitest rather than duplicating them in browser tests.
+- Make test data unique and deterministic, isolate browser contexts where roles or sessions differ, and clean up persistent state when a test can affect later runs.
+- End-to-end tests must use `TEST_DATABASE_URL`; never use `DATABASE_URL`. The Playwright configuration maps the test database into the application process and starts the development server automatically.
+- Use Playwright traces, screenshots, and the UI runner to diagnose failures. Do not weaken assertions, add unconditional delays, or increase timeouts until the underlying behavior has been investigated.
+- Before considering a UI or integration change complete, run the focused Playwright coverage for the changed journey and, when practical, the full end-to-end suite.
+
+## Checks
+
+Run checks after code changes when practical:
+
+- `bun run test`
+- `bun run test:e2e`
+- `bun type:check`
+- `bun lint`
+- `bun fmt`
+
+## Examples
+
+KrakStack examples are the canonical architecture reference for this project. Prefer the configured `krakstack` project reference. If it is unavailable, use `https://github.com/krakcons/krakstack/tree/main/src/agent-examples`.
+
+Before implementing or substantially refactoring one of the areas below, read the corresponding KrakStack example and the nearest equivalent implementation in this repository.
+
+| Task                  | Required KrakStack reference                |
+| --------------------- | ------------------------------------------- |
+| Effect service        | `src/agent-examples/service/service.ts`     |
+| Effect schemas        | `src/agent-examples/service/schema.ts`      |
+| Durable workflows     | `src/agent-examples/service/workflows.ts`   |
+| Workflow engine layer | `src/services/workflow.ts`                  |
+| HttpApi contract      | `src/agent-examples/service/api.group.ts`   |
+| HttpApi handlers      | `src/agent-examples/service/api.builder.ts` |
+| Root API registration | `src/agent-examples/service/api-entry.ts`   |
+| Client atoms          | `src/agent-examples/service/atom.ts`        |
+| Forms                 | `src/agent-examples/service/form.tsx`       |
+| Tables                | `src/agent-examples/service/table.tsx`      |
+
+<!-- intent-skills:start -->
+
+## Skill Loading
+
+Before substantial work:
+
+- Skill check: run `npx @tanstack/intent@latest list`, or use skills already listed in context.
+- Skill guidance: if one local skill clearly matches the task, run `npx @tanstack/intent@latest load <package>#<skill>` and follow the returned `SKILL.md`.
+- Monorepos: when working across packages, run the skill check from the workspace root and prefer the local skill for the package being changed.
+- Multiple matches: prefer the most specific local skill for the package or concern you are changing; load additional skills only when the task spans multiple packages or concerns.
+
+<!-- intent-skills:end -->

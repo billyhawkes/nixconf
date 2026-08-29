@@ -52,9 +52,19 @@ builtins.toJSON (
     };
     references = {
       effect = {
-        repository = "effect-TS/effect-smol";
+        repository = "Effect-TS/effect";
         branch = "main";
-        description = "Use for effect based code: httpapi, services, atom, etc";
+        description = "Use for effect based code: httpapi, services, atom, ai, etc";
+      };
+      krakstack = {
+        repository = "krakcons/krakstack";
+        branch = "main";
+        description = "Component registry and examples for effect services in src/agent-examples";
+      };
+      "krakstack-template" = {
+        repository = "krakcons/krakstack-template";
+        branch = "main";
+        description = "Example repository using a standard structure for krakstack repos and examples of setup";
       };
       "better-auth" = {
         repository = "better-auth/better-auth";

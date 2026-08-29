@@ -18,7 +18,7 @@ in
     etc."bunfig.toml".text = ''
       [install]
       minimumReleaseAge = 259200
-      minimumReleaseAgeExcludes = ["@krak-stack/auth"]
+      minimumReleaseAgeExcludes = ["@krak-stack/auth", "@krak-stack/registry"]
     '';
 
     systemPackages =

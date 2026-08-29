@@ -264,6 +264,7 @@
           view_options.show_hidden = true;
         };
       };
+      utility.preview.markdownPreview.enable = true;
 
       augroups = [
         {
