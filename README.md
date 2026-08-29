@@ -7,9 +7,9 @@ NixOS configuration for personal desktop.
 ```
 .
 ├── flake.nix                    # Entry point
-├── hosts/desktop/
-│   ├── configuration.nix         # Host config
-│   └── hardware.nix              # Hardware config (auto-generated)
+├── hosts/
+│   ├── desktop/                   # Desktop workstation
+│   └── desktop-02/                # Headless server
 ├── modules/
 │   ├── system.nix                # Base system settings
 │   ├── desktop.nix               # KDE Plasma, Pipewire, Bluetooth
@@ -32,6 +32,24 @@ nix shell nixpkgs/nixos-unstable#nh -c \
 ```
 
 One command applies everything — system, desktop, development, gaming, and user configs.
+
+## Apply desktop-02 config
+
+```bash
+nix shell nixpkgs/nixos-unstable#nh -c \
+    nh os switch . \
+    --hostname desktop-02 \
+    --build-host "billy@10.0.0.56" \
+    --target-host "billy@10.0.0.56" \
+    --ask
+```
+
+After the first deployment, enroll the server in Tailscale:
+
+```bash
+ssh billy@10.0.0.56
+sudo tailscale up --ssh --hostname=desktop-02
+```
 
 ## Apply MacBook config
 

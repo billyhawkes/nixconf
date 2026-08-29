@@ -38,6 +38,11 @@
             sops-nix.nixosModules.sops
           ];
         };
+
+        desktop-02 = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [ ./hosts/desktop-02/configuration.nix ];
+        };
       };
 
       darwinConfigurations = {
