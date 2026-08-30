@@ -1,12 +1,11 @@
-{ pkgs, ... }:
+_:
 let
   hostName = "desktop-02";
 in
 {
   imports = [
     ./hardware.nix
-    ../../modules/common.nix
-    ../../modules/system.nix
+    ../../modules/nixos.nix
   ];
 
   networking.hostName = hostName;
@@ -16,25 +15,22 @@ in
     efi.canTouchEfiVariables = true;
   };
 
-  services.tailscale = {
+  services.k3s = {
     enable = true;
-    openFirewall = true;
+    role = "server";
   };
 
-  users.users.billy = {
-    isNormalUser = true;
-    description = "Billy";
-    extraGroups = [
-      "networkmanager"
-      "wheel"
+  networking.firewall = {
+    allowedTCPPorts = [
+      6443
+      10250
     ];
-    shell = pkgs.bash;
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFt7zIRkUAFBXXwF/HVAMR16UKA8nB8nOg96qbBzR0cU billyhawkes02@gmail.com"
+    allowedUDPPorts = [ 8472 ];
+    trustedInterfaces = [
+      "cni0"
+      "flannel.1"
     ];
   };
-
-  services.openssh.settings.PasswordAuthentication = false;
 
   system.stateVersion = "25.11";
 }

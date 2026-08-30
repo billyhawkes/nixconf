@@ -7,13 +7,13 @@
       xkb.options = "caps:escape";
     };
 
-    displayManager.sddm.enable = true;
-
-    displayManager.defaultSession = "plasmax11";
-
-    displayManager.autoLogin = {
-      enable = true;
-      user = "billy";
+    displayManager = {
+      sddm.enable = true;
+      defaultSession = "plasmax11";
+      autoLogin = {
+        enable = true;
+        user = "billy";
+      };
     };
 
     desktopManager.plasma6.enable = true;

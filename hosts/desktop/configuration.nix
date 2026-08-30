@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 let
   hostName = "desktop";
   opencodeWebPort = 4096;
@@ -11,18 +11,15 @@ let
     };
   };
   syncthingGuiPort = 8384;
-  syncthingSyncPort = 22000;
 in
 {
   imports = [
     ./hardware.nix
-    ../../modules/common.nix
-    ../../modules/system.nix
+    ../../modules/nixos.nix
     ../../modules/desktop.nix
     ../../modules/ai.nix
     ../../modules/gaming.nix
     ../../modules/secrets.nix
-    ../../modules/tailscale.nix
     ../../modules/development.nix
   ];
 
@@ -30,23 +27,17 @@ in
 
   environment.sessionVariables.PATH = [ "/home/billy/.bun/bin" ];
 
-  preferences = {
-    tailscale = {
-      inherit hostName;
-      enable = true;
-      ports = [
-        11434
-        opencodeWebPort
-        syncthingGuiPort
-        syncthingSyncPort
-      ];
-    };
+  sops.secrets.tailscale_key = { };
+
+  services.tailscale = {
+    authKeyFile = config.sops.secrets.tailscale_key.path;
+    extraUpFlags = [
+      "--hostname=${hostName}"
+      "--ssh"
+    ];
   };
 
-  networking.firewall.interfaces.tailscale0.allowedUDPPorts = [
-    syncthingSyncPort
-    21027
-  ];
+  networking.firewall.trustedInterfaces = [ "tailscale0" ];
 
   environment.etc."opencode/opencode.jsonc".text = opencodeConfig;
 
@@ -97,17 +88,12 @@ in
   };
 
   users.users.billy = {
-    isNormalUser = true;
-    description = "Billy";
     extraGroups = [
-      "networkmanager"
-      "wheel"
       "audio"
       "video"
       "input"
       "gamemode"
     ];
-    shell = pkgs.bash;
     packages = with pkgs; [
       discord
       firefox
@@ -116,14 +102,7 @@ in
       pavucontrol
       pamixer
     ];
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFt7zIRkUAFBXXwF/HVAMR16UKA8nB8nOg96qbBzR0cU billyhawkes02@gmail.com"
-    ];
   };
-
-  users.users.root.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFt7zIRkUAFBXXwF/HVAMR16UKA8nB8nOg96qbBzR0cU billyhawkes02@gmail.com"
-  ];
 
   system.activationScripts.bunfig.text = ''
     install -d -m 0755 -o billy -g users /home/billy

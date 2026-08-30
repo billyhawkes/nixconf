@@ -1,6 +1,12 @@
 { pkgs, ... }:
-
+let
+  sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFt7zIRkUAFBXXwF/HVAMR16UKA8nB8nOg96qbBzR0cU billyhawkes02@gmail.com";
+in
 {
+  imports = [
+    ./common.nix
+  ];
+
   boot = {
     tmp.cleanOnBoot = true;
     kernel.sysctl = {
@@ -25,6 +31,24 @@
       PasswordAuthentication = false;
     };
   };
+
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
+  };
+
+  users.users.billy = {
+    isNormalUser = true;
+    description = "Billy";
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
+    shell = pkgs.bash;
+    openssh.authorizedKeys.keys = [ sshKey ];
+  };
+
+  users.users.root.openssh.authorizedKeys.keys = [ sshKey ];
 
   time.timeZone = "America/Toronto";
   i18n.defaultLocale = "en_CA.UTF-8";

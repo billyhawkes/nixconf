@@ -11,11 +11,12 @@ NixOS configuration for personal desktop.
 │   ├── desktop/                   # Desktop workstation
 │   └── desktop-02/                # Headless server
 ├── modules/
-│   ├── system.nix                # Base system settings
+│   ├── nixos.nix                 # Shared NixOS system configuration
+│   ├── common.nix                # Packages shared by NixOS and macOS
 │   ├── desktop.nix               # KDE Plasma, Pipewire, Bluetooth
 │   ├── development.nix           # nvf Neovim, Bun, web tooling
 │   ├── gaming.nix                # Steam, Gamemode, AMD optimizations
-│   └── user-config.nix           # Kitty, Git, Bash configs
+│   └── secrets.nix               # SOPS defaults
 └── scripts/
     └── install.sh                # nixos-anywhere helper
 ```
@@ -26,22 +27,22 @@ NixOS configuration for personal desktop.
 nix shell nixpkgs/nixos-unstable#nh -c \
     nh os switch ".#desktop" \
     -- \
-    --build-host "billy@<ip>" \
-    --target-host "billy@<ip>" \
-    --sudo
+    --build-host "root@<ip>" \
+    --target-host "root@<ip>"
 ```
 
 One command applies everything — system, desktop, development, gaming, and user configs.
 
 ## Apply desktop-02 config
 
+After the initial deployment has provisioned the root SSH key:
+
 ```bash
 nix shell nixpkgs/nixos-unstable#nh -c \
     nh os switch . \
     --hostname desktop-02 \
-    --build-host "billy@10.0.0.56" \
-    --target-host "billy@10.0.0.56" \
-    --ask
+    --build-host "root@10.0.0.56" \
+    --target-host "root@10.0.0.56"
 ```
 
 After the first deployment, enroll the server in Tailscale:
