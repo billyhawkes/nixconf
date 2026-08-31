@@ -11,3 +11,7 @@ secrets/*.env
 !secrets/*.enc.env
 
 result
+.alchemy/
+.env
+node_modules/
+tmp/

@@ -1,0 +1,22 @@
+{
+  "name": "nixconf-infrastructure",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "infra:kubeconfig": "bash scripts/desktop-02-kubeconfig.sh",
+    "infra:plan": "alchemy plan infra/alchemy.run.ts --stage production",
+    "infra:deploy": "alchemy deploy infra/alchemy.run.ts --stage production",
+    "type:check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@effect/platform-bun": "4.0.0-rc.112",
+    "@effect/platform-node": "4.0.0-rc.112",
+    "alchemy": "2.0.0-beta.74",
+    "effect": "4.0.0-rc.112"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20260708.1",
+    "@types/bun": "latest",
+    "typescript": "5.8.3"
+  }
+}
